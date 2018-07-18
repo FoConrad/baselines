@@ -245,13 +245,16 @@ class GetFlat(object):
 
 _PLACEHOLDER_CACHE = {}  # name -> (placeholder, dtype, shape)
 
-def get_placeholder(name, dtype, shape):
+def get_placeholder(name, dtype, shape, default=None):
     if name in _PLACEHOLDER_CACHE:
         out, dtype1, shape1 = _PLACEHOLDER_CACHE[name]
         assert dtype1 == dtype and shape1 == shape
         return out
     else:
-        out = tf.placeholder(dtype=dtype, shape=shape, name=name)
+        if default is not None:
+            out = tf.placeholder_with_default(default, shape=shape, name=name)
+        else:
+            out = tf.placeholder(dtype=dtype, shape=shape, name=name)
         _PLACEHOLDER_CACHE[name] = (out, dtype, shape)
         return out
 
